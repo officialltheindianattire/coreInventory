@@ -32,3 +32,17 @@ input, select, textarea {
 input::placeholder, textarea::placeholder {
   color: #6b7280 !important; /* Tailwind gray-500 */
 }
+
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

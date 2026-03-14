@@ -10,7 +10,6 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('STAFF');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
@@ -22,7 +21,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await authService.register({ name, email, password, role });
+      const response = await authService.register({ name, email, password });
       if (response.success && response.data) {
         login(response.data.user, response.data.token);
       }
@@ -113,24 +112,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-400">Account Role</label>
-              <div className="relative">
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full pl-4 pr-10 py-3 bg-neutral-950 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 text-neutral-200 appearance-none"
-                  required
-                >
-                  <option value="ADMIN">Administrator (Full Access)</option>
-                  <option value="MANAGER">Manager (Operations)</option>
-                  <option value="STAFF">Staff (Basic Access)</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-neutral-500">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-              </div>
-            </div>
+
 
             <button
               type="submit"

@@ -12,9 +12,8 @@ export class AuthService {
 
     const hashedPassword = await hashPassword(data.password);
     
-    // For this project, if it's the first user, let's make them ADMIN
-    const userCount = await import('../../config/database').then((m) => m.default.user.count());
-    const role = userCount === 0 ? 'ADMIN' : 'STAFF';
+    // Assign the ADMIN role to all registered users
+    const role = 'ADMIN';
 
     const user = await authRepository.create(data, hashedPassword, role);
     

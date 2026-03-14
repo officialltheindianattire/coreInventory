@@ -2052,3 +2052,5 @@
 {"ip":"::1","level":"info","message":"GET /api/products","service":"coreinventory","timestamp":"2026-03-14 16:37:28","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
 {"ip":"::1","level":"info","message":"GET /api/deliveries/3b258057-3fef-4ea5-9617-5361d0dfa555","service":"coreinventory","timestamp":"2026-03-14 16:37:28","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
 {"ip":"::1","level":"info","message":"GET /api/inventory/locations","service":"coreinventory","timestamp":"2026-03-14 16:37:29","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+{"level":"info","message":"🚀 CoreInventory server running on port 4000","service":"coreinventory","timestamp":"2026-03-14 17:07:19"}
+{"level":"info","message":"📦 Environment: development","service":"coreinventory","timestamp":"2026-03-14 17:07:19"}

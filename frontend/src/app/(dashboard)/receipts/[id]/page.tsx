@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { receiptService } from '@/services/operations';
 import { productService } from '@/services/product';
-import { ArrowLeft, Trash2, Plus } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Receipt {
@@ -119,7 +119,7 @@ export default function ReceiptDetailPage() {
   return (
     <div className="flex flex-col h-full bg-gray-50 text-gray-900 -m-8 min-h-screen">
       {/* Top action bar */}
-      <div className="flex flex-col border-b border-gray-200 bg-white sticky top-0 z-20">
+      <div className="flex flex-col border-b border-gray-200 bg-white sticky top-0 z-20 print:hidden">
         <div className="flex items-center justify-between px-8 py-4">
           <div className="flex items-center space-x-4">
             <button onClick={() => router.push('/receipts')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 shadow-sm text-gray-600">
@@ -152,7 +152,11 @@ export default function ReceiptDetailPage() {
               </button>
             )}
             
-            <button className="px-5 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center">
+            <button 
+              onClick={() => window.print()}
+              className="px-5 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center"
+            >
+              <Printer className="w-4 h-4 mr-2" />
               Print
             </button>
             {(receipt.status === 'DRAFT' || receipt.status === 'READY') && (
@@ -200,7 +204,7 @@ export default function ReceiptDetailPage() {
         <div className="max-w-6xl mx-auto space-y-8">
           
           {/* Details Form Grid exactly matching Blueprint */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 print:shadow-none print:border-none print:p-0">
             <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">{receipt.referenceId || receipt.id.split('-')[0].toUpperCase()}</h2>
             
             <div className="grid grid-cols-2 gap-x-16 gap-y-8">
@@ -240,31 +244,31 @@ export default function ReceiptDetailPage() {
           </div>
 
           {/* Products Table matching Blueprint */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-12">
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-12 print:shadow-none print:border-none">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center print:bg-white print:px-0">
               <h3 className="text-lg font-bold text-gray-800">Products</h3>
             </div>
             <div className="p-0">
               <table className="w-full text-left text-sm text-gray-700">
                 <thead className="bg-white border-b-2 border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 font-bold text-gray-900 w-2/3">Product</th>
+                    <th className="px-6 py-4 font-bold text-gray-900 w-2/3 print:px-0">Product</th>
                     <th className="px-6 py-4 font-bold text-gray-900 text-center">Quantity</th>
-                    <th className="px-6 py-4 text-right"></th>
+                    <th className="px-6 py-4 text-right print:hidden"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {receipt.items.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="font-semibold text-indigo-700">[{item.product.sku}] {item.product.name}</span>
+                      <td className="px-6 py-4 print:px-0">
+                        <span className="font-semibold text-indigo-700 print:text-gray-900">[{item.product.sku}] {item.product.name}</span>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full font-bold font-mono text-gray-900">
                           {item.quantity}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-4 text-right print:hidden">
                         {receipt.status === 'DRAFT' && (
                           <button onClick={() => handleRemoveItem(item.id)} className="text-gray-400 hover:text-red-500 transition-colors p-1 bg-white rounded-md shadow-sm border border-gray-200">
                             <Trash2 className="w-4 h-4" />
@@ -276,7 +280,7 @@ export default function ReceiptDetailPage() {
                   
                   {/* Add New Item Row */}
                   {receipt.status === 'DRAFT' && (
-                    <tr className="bg-gray-50/50">
+                    <tr className="bg-gray-50/50 print:hidden">
                       <td className="px-6 py-4">
                         <div className="flex flex-col space-y-1">
                           <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">New Product</label>

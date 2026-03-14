@@ -14,7 +14,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col print:hidden">
         <div className="h-16 flex items-center px-6 border-b border-gray-200">
           <PackageSearch className="w-6 h-6 text-indigo-600 mr-2" />
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
@@ -88,14 +88,14 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 lg:px-8">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 lg:px-8 print:hidden">
           <h1 className="text-lg font-semibold text-gray-900">Workspace</h1>
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-50 p-6 lg:p-8">
+        <div className="flex-1 overflow-auto bg-gray-50 p-6 lg:p-8 print:p-0 print:bg-white print:overflow-visible">
           {children}
         </div>
       </main>
