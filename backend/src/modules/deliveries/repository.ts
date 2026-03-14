@@ -6,6 +6,8 @@ export class DeliveryRepository {
     return prisma.delivery.findMany({
       include: {
         warehouse: true,
+        location: true,
+        creator: { select: { id: true, name: true, email: true } },
         items: { include: { product: true } },
       },
       orderBy: { createdAt: 'desc' },
@@ -17,15 +19,28 @@ export class DeliveryRepository {
       where: { id },
       include: {
         warehouse: true,
+        location: true,
+        creator: { select: { id: true, name: true, email: true } },
         items: { include: { product: true } },
       },
     });
   }
 
-  async create(data: { customerName: string; warehouseId: string }) {
+  async create(data: { customerName: string; contact?: string; scheduleDate?: Date; fromLocationId?: string; warehouseId: string; createdBy: string }) {
+    const count = await prisma.delivery.count();
+    const sequence = String(count + 1).padStart(4, '0');
+    const referenceId = `WH/OUT/${sequence}`;
+
     return prisma.delivery.create({
-      data,
-      include: { warehouse: true },
+      data: {
+        ...data,
+        referenceId,
+      },
+      include: {
+        warehouse: true,
+        location: true,
+        creator: { select: { id: true, name: true, email: true } },
+      },
     });
   }
 
@@ -52,8 +67,11 @@ export class DeliveryRepository {
     }
     if (delivery.items.length === 0) throw new Error('Cannot validate an empty delivery');
 
-    const defaultLocation = delivery.warehouse.locations[0];
-    if (!defaultLocation) throw new Error('Warehouse has no locations configured');
+    const defaultLocation = delivery.fromLocationId
+      ? delivery.warehouse.locations.find((l: any) => l.id === delivery.fromLocationId) 
+      : delivery.warehouse.locations[0];
+      
+    if (!defaultLocation) throw new Error('No valid source location found for this warehouse');
 
     // Check stock for each item
     for (const item of delivery.items) {

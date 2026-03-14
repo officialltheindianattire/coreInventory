@@ -5,6 +5,7 @@ import { deliveryService } from '@/services/operations';
 import { warehouseService } from '@/services/warehouse';
 import { productService } from '@/services/product';
 import { Plus, FileOutput, Trash2, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Delivery {
   id: string;
@@ -16,6 +17,7 @@ interface Delivery {
 }
 
 export default function DeliveriesPage() {
+  const router = useRouter();
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [warehouses, setWarehouses] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -89,8 +91,8 @@ export default function DeliveriesPage() {
       ) : (
         <div className="space-y-4">
           {deliveries.map((delivery) => (
-            <div key={delivery.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-5 flex items-center justify-between cursor-pointer" onClick={() => setExpandedId(expandedId === delivery.id ? null : delivery.id)}>
+            <div key={delivery.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:border-red-300 transition-colors">
+              <div className="p-5 flex items-center justify-between cursor-pointer" onClick={() => router.push(`/deliveries/${delivery.id}`)}>
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center"><FileOutput className="w-5 h-5 text-red-500" /></div>
                   <div>
@@ -108,7 +110,7 @@ export default function DeliveriesPage() {
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(delivery.id); }} className="p-1.5 text-red-500 hover:bg-red-50 rounded"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   )}
-                  {expandedId === delivery.id ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
               </div>
               {expandedId === delivery.id && (

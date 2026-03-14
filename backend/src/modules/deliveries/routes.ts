@@ -21,6 +21,7 @@ router.post('/', authorize('ADMIN', 'MANAGER', 'STAFF'), validate(deliverySchema
 router.post('/:id/items', authorize('ADMIN', 'MANAGER', 'STAFF'), validate(deliveryItemSchema), controller.addItem);
 router.delete('/:id/items/:itemId', authorize('ADMIN', 'MANAGER'), controller.removeItem);
 router.post('/:id/validate', authorize('ADMIN', 'MANAGER'), controller.validate);
+router.post('/:id/ready', authorize('ADMIN', 'MANAGER'), controller.markReady);
 router.post('/:id/cancel', authorize('ADMIN', 'MANAGER'), controller.cancel);
 router.delete('/:id', authorize('ADMIN'), controller.delete);
 

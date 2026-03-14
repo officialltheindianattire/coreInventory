@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { DeliveryService } from './service';
 import { sendSuccess, sendError } from '../../utils/response';
 import logger from '../../utils/logger';
+import { AuthRequest } from '../../middleware/auth';
 
 export class DeliveryController {
   constructor(private readonly service: DeliveryService) {}
@@ -26,9 +27,12 @@ export class DeliveryController {
     }
   };
 
-  create = async (req: Request, res: Response) => {
+  create = async (req: AuthRequest, res: Response) => {
     try {
-      const delivery = await this.service.create(req.body);
+      const delivery = await this.service.create({
+        ...req.body,
+        createdBy: req.user!.userId,
+      });
       return sendSuccess(res, delivery, 'Delivery created successfully', 201);
     } catch (error: any) {
       logger.error('Error creating delivery', { error: error.message });
@@ -70,6 +74,18 @@ export class DeliveryController {
       if (error.message === 'Delivery not found') return sendError(res, error.message, 404);
       logger.error('Error validating delivery', { error: error.message });
       return sendError(res, 'Failed to validate delivery', 500);
+    }
+  };
+
+  markReady = async (req: Request<{ id: string }>, res: Response) => {
+    try {
+      const delivery = await this.service.markReady(req.params.id);
+      return sendSuccess(res, delivery, 'Delivery marked as ready');
+    } catch (error: any) {
+      if (error.message.includes('Status must be DRAFT')) return sendError(res, error.message, 400);
+      if (error.message === 'Delivery not found') return sendError(res, error.message, 404);
+      logger.error('Error marking delivery ready', { error: error.message });
+      return sendError(res, 'Failed to mark delivery ready', 500);
     }
   };
 

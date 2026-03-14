@@ -68,8 +68,8 @@ export class ProductService {
     return product;
   }
 
-  async createProduct(data: Prisma.ProductUncheckedCreateInput & { initialQuantity?: number, locationId?: string }) {
-    const { initialQuantity, locationId, ...productData } = data;
+  async createProduct(data: Prisma.ProductUncheckedCreateInput & { initialQuantity?: number, locationId?: string, unitCost?: number }) {
+    const { initialQuantity, locationId, unitCost, ...productData } = data;
     const existingSku = await this.repository.getProductBySku(productData.sku);
     if (existingSku) {
       throw new Error('Product with this SKU already exists');
@@ -82,7 +82,10 @@ export class ProductService {
        if (!loc) throw new Error('Location not found');
     }
 
-    const product = await this.repository.createProduct(productData);
+    const product = await this.repository.createProduct({
+      ...productData,
+      ...(unitCost !== undefined && { unitCost })
+    });
 
     // If initial quantity is provided, create an adjustment stock movement to reflect the starting balance
     if (initialQuantity && initialQuantity > 0 && locationId) {

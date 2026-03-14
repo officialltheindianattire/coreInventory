@@ -5,6 +5,7 @@ import { receiptService } from '@/services/operations';
 import { warehouseService } from '@/services/warehouse';
 import { productService } from '@/services/product';
 import { Plus, FileInput, Trash2, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Receipt {
   id: string;
@@ -16,6 +17,7 @@ interface Receipt {
 }
 
 export default function ReceiptsPage() {
+  const router = useRouter();
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [warehouses, setWarehouses] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -89,8 +91,8 @@ export default function ReceiptsPage() {
       ) : (
         <div className="space-y-4">
           {receipts.map((receipt) => (
-            <div key={receipt.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-5 flex items-center justify-between cursor-pointer" onClick={() => setExpandedId(expandedId === receipt.id ? null : receipt.id)}>
+            <div key={receipt.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:border-green-300 transition-colors">
+              <div className="p-5 flex items-center justify-between cursor-pointer" onClick={() => router.push(`/receipts/${receipt.id}`)}>
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center"><FileInput className="w-5 h-5 text-green-600" /></div>
                   <div>
@@ -108,7 +110,7 @@ export default function ReceiptsPage() {
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(receipt.id); }} className="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Delete"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   )}
-                  {expandedId === receipt.id ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
               </div>
               {expandedId === receipt.id && (

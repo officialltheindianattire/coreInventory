@@ -98,6 +98,7 @@ export class ProductController {
          sku: z.string(),
          categoryId: z.string(),
          unitOfMeasure: z.string(),
+         unitCost: z.number().optional(),
          initialQuantity: z.number().optional(),
          locationId: z.string().optional()
       }).parse(req.body);

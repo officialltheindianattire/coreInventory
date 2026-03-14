@@ -12,6 +12,7 @@ export interface Product {
   sku: string;
   categoryId: string;
   unitOfMeasure: string;
+  unitCost?: number;
   createdAt: string;
   category?: Category;
 }
@@ -25,4 +26,7 @@ export interface CreateProductDto {
   sku: string;
   categoryId: string;
   unitOfMeasure: string;
+  unitCost?: number;
+  initialQuantity?: number;
+  locationId?: string;
 }

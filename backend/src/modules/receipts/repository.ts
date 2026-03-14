@@ -6,6 +6,7 @@ export class ReceiptRepository {
     return prisma.receipt.findMany({
       include: {
         warehouse: true,
+        location: true,
         creator: { select: { id: true, name: true, email: true } },
         items: { include: { product: true } },
       },
@@ -18,17 +19,27 @@ export class ReceiptRepository {
       where: { id },
       include: {
         warehouse: true,
+        location: true,
         creator: { select: { id: true, name: true, email: true } },
         items: { include: { product: true } },
       },
     });
   }
 
-  async create(data: { supplierName: string; warehouseId: string; createdBy: string }) {
+  async create(data: { supplierName: string; contact?: string; scheduleDate?: Date; toLocationId?: string; warehouseId: string; createdBy: string }) {
+    // Generate Reference ID (WH/IN/XXXX)
+    const count = await prisma.receipt.count();
+    const sequence = String(count + 1).padStart(4, '0');
+    const referenceId = `WH/IN/${sequence}`;
+
     return prisma.receipt.create({
-      data,
+      data: {
+        ...data,
+        referenceId,
+      },
       include: {
         warehouse: true,
+        location: true,
         creator: { select: { id: true, name: true, email: true } },
       },
     });
@@ -67,10 +78,13 @@ export class ReceiptRepository {
       throw new Error('Cannot validate an empty receipt');
     }
 
-    // Get first location from warehouse (default receiving location)
-    const defaultLocation = receipt.warehouse.locations[0];
+    // Use the explicitly provided toLocationId if exists, otherwise fallback to warehouse's first location
+    const defaultLocation = receipt.toLocationId 
+      ? receipt.warehouse.locations.find(l => l.id === receipt.toLocationId) 
+      : receipt.warehouse.locations[0];
+      
     if (!defaultLocation) {
-      throw new Error('Warehouse has no locations configured');
+      throw new Error('No valid destination location found for this warehouse');
     }
 
     // Transaction: update status + create stock movements

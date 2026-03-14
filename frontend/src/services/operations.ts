@@ -24,7 +24,7 @@ export const receiptService = {
     const response = await api.get(`/receipts/${id}`);
     return response.data;
   },
-  create: async (data: { supplierName: string; warehouseId: string }) => {
+  create: async (data: { supplierName: string; contact?: string; scheduleDate?: string; warehouseId: string; toLocationId?: string }) => {
     const response = await api.post('/receipts', data);
     return response.data;
   },
@@ -33,7 +33,12 @@ export const receiptService = {
     return response.data;
   },
   removeItem: async (receiptId: string, itemId: string) => {
-    await api.delete(`/receipts/${receiptId}/items/${itemId}`);
+    const response = await api.delete(`/receipts/${receiptId}/items/${itemId}`);
+    return response.data;
+  },
+  markReady: async (receiptId: string) => {
+    const response = await api.post(`/receipts/${receiptId}/ready`);
+    return response.data;
   },
   validate: async (receiptId: string) => {
     const response = await api.post(`/receipts/${receiptId}/validate`);
@@ -57,7 +62,7 @@ export const deliveryService = {
     const response = await api.get(`/deliveries/${id}`);
     return response.data;
   },
-  create: async (data: { customerName: string; warehouseId: string }) => {
+  create: async (data: { customerName: string; contact?: string; scheduleDate?: string; warehouseId: string; fromLocationId?: string }) => {
     const response = await api.post('/deliveries', data);
     return response.data;
   },
@@ -66,7 +71,12 @@ export const deliveryService = {
     return response.data;
   },
   removeItem: async (deliveryId: string, itemId: string) => {
-    await api.delete(`/deliveries/${deliveryId}/items/${itemId}`);
+    const response = await api.delete(`/deliveries/${deliveryId}/items/${itemId}`);
+    return response.data;
+  },
+  markReady: async (deliveryId: string) => {
+    const response = await api.post(`/deliveries/${deliveryId}/ready`);
+    return response.data;
   },
   validate: async (deliveryId: string) => {
     const response = await api.post(`/deliveries/${deliveryId}/validate`);

@@ -8,7 +8,7 @@ export const validate = (schema: ZodSchema) => {
 
     if (!result.success) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errors = (result.error as any).errors.map((e: ZodIssue) => ({
+      const errors = (result.error as any).issues.map((e: ZodIssue) => ({
         field: e.path.join('.'),
         message: e.message,
       }));
@@ -27,7 +27,7 @@ export const validateQuery = (schema: ZodSchema) => {
 
     if (!result.success) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const errors = (result.error as any).errors.map((e: ZodIssue) => ({
+      const errors = (result.error as any).issues.map((e: ZodIssue) => ({
         field: e.path.join('.'),
         message: e.message,
       }));

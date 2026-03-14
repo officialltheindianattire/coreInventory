@@ -79,6 +79,18 @@ export class ReceiptController {
     }
   };
 
+  markReady = async (req: Request<{ id: string }>, res: Response) => {
+    try {
+      const receipt = await this.service.markReady(req.params.id);
+      return sendSuccess(res, receipt, 'Receipt marked as ready');
+    } catch (error: any) {
+      if (error.message.includes('Status must be DRAFT')) return sendError(res, error.message, 400);
+      if (error.message === 'Receipt not found') return sendError(res, error.message, 404);
+      logger.error('Error marking receipt ready', { error: error.message });
+      return sendError(res, 'Failed to mark receipt ready', 500);
+    }
+  };
+
   cancel = async (req: Request<{ id: string }>, res: Response) => {
     try {
       const receipt = await this.service.cancel(req.params.id);

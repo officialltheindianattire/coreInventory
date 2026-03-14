@@ -11,7 +11,7 @@ export class DeliveryService {
     return delivery;
   }
 
-  async create(data: { customerName: string; warehouseId: string }) {
+  async create(data: { customerName: string; contact?: string; scheduleDate?: Date; fromLocationId?: string; warehouseId: string; createdBy: string }) {
     return this.repository.create(data);
   }
 
@@ -33,6 +33,14 @@ export class DeliveryService {
 
   async validate(deliveryId: string) {
     return this.repository.validateDelivery(deliveryId);
+  }
+
+  async markReady(deliveryId: string) {
+    const delivery = await this.findById(deliveryId);
+    if (delivery.status !== 'DRAFT') {
+      throw new Error('Status must be DRAFT to mark as READY');
+    }
+    return this.repository.updateStatus(deliveryId, 'READY');
   }
 
   async cancel(deliveryId: string) {

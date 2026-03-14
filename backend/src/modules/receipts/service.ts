@@ -13,7 +13,7 @@ export class ReceiptService {
     return receipt;
   }
 
-  async create(data: { supplierName: string; warehouseId: string; createdBy: string }) {
+  async create(data: { supplierName: string; contact?: string; scheduleDate?: Date; toLocationId?: string; warehouseId: string; createdBy: string }) {
     return this.repository.create(data);
   }
 
@@ -36,6 +36,14 @@ export class ReceiptService {
   async validate(receiptId: string) {
     const receipt = await this.findById(receiptId);
     return this.repository.validateReceipt(receiptId, receipt.warehouseId);
+  }
+
+  async markReady(receiptId: string) {
+    const receipt = await this.findById(receiptId);
+    if (receipt.status !== 'DRAFT') {
+      throw new Error('Status must be DRAFT to mark as READY');
+    }
+    return this.repository.updateStatus(receiptId, 'READY');
   }
 
   async cancel(receiptId: string) {

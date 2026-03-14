@@ -44,7 +44,8 @@ model User {
   role      Role     @default(STAFF)
   createdAt DateTime @default(now()) @map("created_at")
 
-  receipts Receipt[]
+  receipts   Receipt[]
+  deliveries Delivery[]
 
   @@map("users")
 }
@@ -78,6 +79,8 @@ model Location {
   transfersFrom      Transfer[]      @relation("TransferFrom")
   transfersTo        Transfer[]      @relation("TransferTo")
   adjustments        Adjustment[]
+  receipts           Receipt[]
+  deliveries         Delivery[]      @relation("DeliveryLocation")
 
   @@map("locations")
 }
@@ -101,6 +104,7 @@ model Product {
   sku           String   @unique
   categoryId    String   @map("category_id")
   unitOfMeasure String   @map("unit_of_measure")
+  unitCost      Float?   @default(0) @map("unit_cost")
   createdAt     DateTime @default(now()) @map("created_at")
 
   category       Category       @relation(fields: [categoryId], references: [id])
@@ -145,13 +149,18 @@ model StockMovement {
 
 model Receipt {
   id           String         @id @default(uuid())
-  supplierName String         @map("supplier_name")
+  referenceId  String         @unique @map("reference_id")
+  contact      String?        @map("contact")
+  supplierName String         @map("supplier_name") // Keeping this for backward compatibility or linking
   warehouseId  String         @map("warehouse_id")
+  toLocationId String?        @map("to_location_id")
+  scheduleDate DateTime?      @map("schedule_date")
   status       DocumentStatus @default(DRAFT)
   createdBy    String         @map("created_by")
   createdAt    DateTime       @default(now()) @map("created_at")
 
   warehouse Warehouse     @relation(fields: [warehouseId], references: [id])
+  location  Location?     @relation(fields: [toLocationId], references: [id])
   creator   User          @relation(fields: [createdBy], references: [id])
   items     ReceiptItem[]
 
@@ -175,13 +184,20 @@ model ReceiptItem {
 // ──────────────────────────────────────────
 
 model Delivery {
-  id           String         @id @default(uuid())
-  customerName String         @map("customer_name")
-  warehouseId  String         @map("warehouse_id")
-  status       DocumentStatus @default(DRAFT)
-  createdAt    DateTime       @default(now()) @map("created_at")
+  id             String         @id @default(uuid())
+  referenceId    String         @unique @map("reference_id")
+  contact        String?        @map("contact")
+  customerName   String         @map("customer_name")
+  warehouseId    String         @map("warehouse_id")
+  fromLocationId String?        @map("from_location_id")
+  scheduleDate   DateTime?      @map("schedule_date")
+  status         DocumentStatus @default(DRAFT)
+  createdBy      String         @map("created_by")
+  createdAt      DateTime       @default(now()) @map("created_at")
 
   warehouse Warehouse      @relation(fields: [warehouseId], references: [id])
+  location  Location?      @relation("DeliveryLocation", fields: [fromLocationId], references: [id])
+  creator   User           @relation(fields: [createdBy], references: [id])
   items     DeliveryItem[]
 
   @@map("deliveries")
